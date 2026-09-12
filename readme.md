@@ -25,50 +25,11 @@ This library uses **pdfium**, the same PDF engine built into Google Chrome, to d
 npm install react-pdf-viewer-wasm
 ```
 
-That's it. You don't need to download or configure anything else — this library automatically fetches the small "PDF engine" file it needs from the internet the first time your app shows a PDF.
+No extra configuration needed. The library automatically loads its PDF engine from the internet the first time your app shows a PDF.
 
-*(If your company's network blocks outside websites, see [Using it without the internet](#using-it-without-the-internet) below.)*
+*(Need offline/corporate support? See [Using it without the internet](#using-it-without-the-internet).)*
 
 ---
-
-## Vite setup (required)
-
-Add the following to your app's `vite.config.ts`. This is needed because the library's WASM file must be served to the browser, and the browser requires special security headers to run it:
-
-```ts
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
-import { createReadStream, existsSync } from 'fs'
-import { resolve } from 'path'
-
-function servePdfCoreWasm() {
-  return {
-    name: 'serve-pdf-core-wasm',
-    configureServer(server: any) {
-      server.middlewares.use('/pdf_core_bg.wasm', (_req: any, res: any, next: any) => {
-        const wasmPath = resolve(
-          import.meta.dirname,
-          'node_modules/react-pdf-viewer-wasm/dist/pdf_core_bg.wasm'
-        )
-        if (!existsSync(wasmPath)) return next()
-        res.setHeader('Content-Type', 'application/wasm')
-        createReadStream(wasmPath).pipe(res)
-      })
-    },
-  }
-}
-
-export default defineConfig({
-  plugins: [react(), servePdfCoreWasm()],
-  server: {
-    headers: {
-      // Required for pdfium.wasm (uses SharedArrayBuffer)
-      'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'require-corp',
-    },
-  },
-})
-```
 
 ## Showing your first PDF
 
@@ -237,29 +198,30 @@ You can use plain text, or your own custom design:
 
 ## Using it without the internet
 
-By default, this library downloads a small "PDF engine" file from a free content-delivery service the first time it's needed. For most people, this just works with zero setup.
+By default, this library loads its engine files from a CDN the first time it's needed. For most people, this just works with zero setup.
 
-If you're building something for a company network that blocks outside websites, or an app that needs to work completely offline, you can host these files yourself instead:
+If you're building for a corporate network that blocks outside websites, or an app that needs to work completely offline, you can self-host these files instead:
 
-**1. Download the two engine files:**
+**1. Download the three engine files:**
 
-- [`pdfium.js`](https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.0.0/pdfium.js)
-- [`pdfium.wasm`](https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.0.0/pdfium.wasm)
+- [`pdfium.js`](https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.1.0/pdfium.js)
+- [`pdfium.wasm`](https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.1.0/pdfium.wasm)
+- [`pdf_core_bg.wasm`](https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.1.0/pdf_core_bg.wasm)
 
-**2. Put both files in your app's `public` folder.**
+**2. Put all three files in your app's `public/` folder.**
 
-**3. Tell the library to use your own copies, before showing any PDF:**
+**3. Tell the library to use your copies — call this once before any `<Document>` is rendered:**
 
 ```tsx
 import { setPdfiumSource } from 'react-pdf-viewer-wasm';
 
 setPdfiumSource({
-  jsUrl: '/pdfium.js',
-  wasmUrl: '/pdfium.wasm',
+  jsUrl:       '/pdfium.js',
+  wasmUrl:     '/pdfium.wasm',
+  coreWasmUrl: '/pdf_core_bg.wasm',
 });
 ```
 
-Do this once, near the very start of your app (for example, in your main entry file), before any `<Document>` is shown.
 
 ---
 
