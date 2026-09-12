@@ -1,34 +1,47 @@
 import init, * as PdfCore from './pdf_core.js';
-import wasmPath from './pdf_core_bg.wasm?no-inline';
 
-const DEFAULT_PDFIUM_JS_URL = 'https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.0.0/pdfium.js';
-const DEFAULT_PDFIUM_WASM_URL = 'https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.0.0/pdfium.wasm';
+const CDN_BASE = 'https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.1.0';
+const DEFAULT_PDFIUM_JS_URL   = `${CDN_BASE}/pdfium.js`;
+const DEFAULT_PDFIUM_WASM_URL = `${CDN_BASE}/pdfium.wasm`;
+const DEFAULT_CORE_WASM_URL   = `${CDN_BASE}/pdf_core_bg.wasm`;
 
-let pdfiumJsUrl = DEFAULT_PDFIUM_JS_URL;
+let pdfiumJsUrl   = DEFAULT_PDFIUM_JS_URL;
 let pdfiumWasmUrl = DEFAULT_PDFIUM_WASM_URL;
+let coreWasmUrl   = DEFAULT_CORE_WASM_URL;
 let ready: Promise<typeof PdfCore> | null = null;
 
 /**
- * Override where the pdfium engine (pdfium.js / pdfium.wasm) is loaded from.
- * Call this BEFORE rendering any <Document>, if you need to self-host these
- * files instead of using the default CDN (e.g. for corporate networks that
- * block external CDNs, offline/airgapped apps, or strict CSP policies).
+ * Override where the pdfium engine files are loaded from.
+ * Call this ONCE before rendering any <Document>, e.g. in your app's entry file.
  *
- * Example:
+ * Use this if you need to self-host the binaries instead of loading them from
+ * the default CDN (e.g. offline apps, corporate networks, strict CSP policies).
+ *
+ * Download all three files from:
+ *   https://cdn.jsdelivr.net/npm/pdf-viewer-assets@1.1.0/
+ *
+ * Put them in your app's `public/` folder, then call:
+ *
  *   setPdfiumSource({
- *     jsUrl: '/vendor/pdfium.js',
- *     wasmUrl: '/vendor/pdfium.wasm',
+ *     jsUrl:       '/pdfium.js',
+ *     wasmUrl:     '/pdfium.wasm',
+ *     coreWasmUrl: '/pdf_core_bg.wasm',
  *   });
  */
-export function setPdfiumSource(options: { jsUrl: string; wasmUrl: string }) {
+export function setPdfiumSource(options: {
+    jsUrl: string;
+    wasmUrl: string;
+    coreWasmUrl: string;
+}) {
     if (ready) {
         throw new Error(
             'setPdfiumSource() must be called before the first <Document> is rendered. ' +
             'The pdfium engine has already started loading.'
         );
     }
-    pdfiumJsUrl = options.jsUrl;
+    pdfiumJsUrl   = options.jsUrl;
     pdfiumWasmUrl = options.wasmUrl;
+    coreWasmUrl   = options.coreWasmUrl;
 }
 
 function loadScript(src: string): Promise<void> {
@@ -55,10 +68,9 @@ export function loadPdfEngine(): Promise<typeof PdfCore> {
             locateFile: () => pdfiumWasmUrl,
         });
 
-        // Build a URL relative to this bundle's location so the wasm file is
-        // resolved correctly wherever the package is installed (e.g. node_modules).
-        const resolvedWasmUrl = new URL(wasmPath, import.meta.url);
-        await init({ module_or_path: resolvedWasmUrl });
+        // Load pdf_core_bg.wasm from CDN (or self-hosted URL if setPdfiumSource was called).
+        // Using a URL string works in all bundlers — no Vite-specific config needed.
+        await init({ module_or_path: coreWasmUrl });
 
         const ok = PdfCore.initialize_pdfium_render(pdfiumModule, PdfCore, false);
         if (!ok) throw new Error('Failed to initialize pdfium-render');
