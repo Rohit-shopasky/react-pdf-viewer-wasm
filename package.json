@@ -1,6 +1,6 @@
 {
   "name": "react-pdf-viewer-wasm",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A React PDF viewer powered by Rust + WebAssembly, using pdfium as the rendering backend.",
   "type": "module",
   "main": "./dist/index.mjs",
