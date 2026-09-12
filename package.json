@@ -13,7 +13,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/pdf_core_bg.wasm"
   ],
   "peerDependencies": {
     "react": ">=18.0.0",
