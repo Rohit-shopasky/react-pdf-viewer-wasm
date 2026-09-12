@@ -1,0 +1,47 @@
+{
+  "name": "react-pdf-viewer-wasm",
+  "version": "0.1.1",
+  "description": "A React PDF viewer powered by Rust + WebAssembly, using pdfium as the rendering backend.",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "vite build"
+  },
+  "license": "MIT",
+  "author": "Rohit Kumar <shan.rohitkumar12@gmail.com>",
+  "keywords": [
+    "pdf",
+    "react",
+    "wasm",
+    "rust",
+    "pdfium",
+    "viewer",
+    "render-pdf"
+  ],
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@typescript/typescript6": "^6.0.2",
+    "@vitejs/plugin-react": "^6.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vite-plugin-dts": "^5.1.0"
+  }
+}

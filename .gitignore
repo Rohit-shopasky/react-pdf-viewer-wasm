@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Compiled WASM binaries (built from Rust; published to npm, not tracked in git)
+src/pdf-core/pdf_core_bg.wasm
+src/pdf-core/pdf_core.js
+
+# Vite / TypeScript cache
+*.tsbuildinfo
+.vite/
+
+# macOS
+.DS_Store
+
+# npm debug logs
+npm-debug.log*
+
+# env files
+.env
+.env.local
+.env.*.local
