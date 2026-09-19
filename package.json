@@ -24,6 +24,15 @@
     "build": "vite build"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rohit-shopasky/react-pdf-viewer-wasm.git",
+    "directory": "react-pdf-wasm"
+  },
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
   "author": "Rohit Kumar <shan.rohitkumar12@gmail.com>",
   "keywords": [
     "pdf",

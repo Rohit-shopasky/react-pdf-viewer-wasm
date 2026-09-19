@@ -1,0 +1,53 @@
+name: Publish to npm (OIDC)
+
+on:
+  push:
+    branches:
+      - main
+
+# ── OIDC trust: allow the job to mint an id-token for npm provenance ──
+permissions:
+  contents: read
+  id-token: write   # Required for npm --provenance
+
+jobs:
+  publish:
+    name: Build & Publish Packages
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ─────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Node + npm registry (OIDC auth built-in) ──────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      # ══════════════════════════════════════════════════════════════════
+      #  Package 1: react-pdf-viewer-wasm  (repo root = this package)
+      # ══════════════════════════════════════════════════════════════════
+
+      - name: Install dependencies (react-pdf-viewer-wasm)
+        run: npm ci
+
+      - name: Build (react-pdf-viewer-wasm)
+        run: npm run build
+
+      - name: Publish react-pdf-viewer-wasm with provenance
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # ══════════════════════════════════════════════════════════════════
+      #  Package 2: pdf-viewer-assets  (subdirectory in this repo)
+      # ══════════════════════════════════════════════════════════════════
+
+      - name: Publish pdf-viewer-assets with provenance
+        working-directory: pdf-viewer-assets
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

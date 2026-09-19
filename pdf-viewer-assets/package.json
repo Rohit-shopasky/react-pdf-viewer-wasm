@@ -1,0 +1,23 @@
+{
+  "name": "pdf-viewer-assets",
+  "version": "1.1.0",
+  "description": "Prebuilt pdfium WebAssembly binary for react-pdf-viewer-wasm",
+  "main": "index.js",
+  "files": [
+    "pdfium.js",
+    "pdfium.wasm",
+    "pdf_core_bg.wasm",
+    "THIRD-PARTY-LICENSES.md"
+  ],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rohit-shopasky/react-pdf-viewer-wasm.git",
+    "directory": "pdf-viewer-assets"
+  },
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
+  "author": "Rohit Kumar <shan.rohitkumar12@gmail.com>"
+}

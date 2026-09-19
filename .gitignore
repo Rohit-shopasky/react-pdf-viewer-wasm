@@ -22,3 +22,6 @@ npm-debug.log*
 .env
 .env.local
 .env.*.local
+
+# npm packed tarballs
+*.tgz
