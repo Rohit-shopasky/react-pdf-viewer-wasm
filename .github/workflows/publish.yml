@@ -40,6 +40,8 @@ jobs:
 
       - name: Publish react-pdf-viewer-wasm
         run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # ══════════════════════════════════════════════════════════════════
       #  Package 2: pdf-viewer-assets
@@ -48,4 +50,6 @@ jobs:
       - name: Publish pdf-viewer-assets
         working-directory: pdf-viewer-assets
         run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
