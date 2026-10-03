@@ -1,14 +1,15 @@
-name: Publish to npm (OIDC)
+name: Publish to npm (OIDC / Trusted Publishing)
 
 on:
   push:
     branches:
       - main
 
-# ── OIDC trust: allow the job to mint an id-token for npm provenance ──
+# Trusted Publishing: GitHub mints an OIDC id-token that npm verifies.
+# No NPM_TOKEN secret required — npm trusts this specific workflow.
 permissions:
   contents: read
-  id-token: write   # Required for npm --provenance
+  id-token: write   # Required for npm Trusted Publishing + provenance
 
 jobs:
   publish:
@@ -20,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Set up Node + npm registry (OIDC auth built-in) ──────────
+      # ── 2. Set up Node + npm registry ───────────────────────────────
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -28,7 +29,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       # ══════════════════════════════════════════════════════════════════
-      #  Package 1: react-pdf-viewer-wasm  (repo root = this package)
+      #  Package 1: react-pdf-viewer-wasm
       # ══════════════════════════════════════════════════════════════════
 
       - name: Install dependencies (react-pdf-viewer-wasm)
@@ -37,17 +38,14 @@ jobs:
       - name: Build (react-pdf-viewer-wasm)
         run: npm run build
 
-      - name: Publish react-pdf-viewer-wasm with provenance
+      - name: Publish react-pdf-viewer-wasm
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # ══════════════════════════════════════════════════════════════════
-      #  Package 2: pdf-viewer-assets  (subdirectory in this repo)
+      #  Package 2: pdf-viewer-assets
       # ══════════════════════════════════════════════════════════════════
 
-      - name: Publish pdf-viewer-assets with provenance
+      - name: Publish pdf-viewer-assets
         working-directory: pdf-viewer-assets
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
