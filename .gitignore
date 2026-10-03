@@ -4,9 +4,10 @@ node_modules/
 # Build output
 dist/
 
-# Compiled WASM binaries (built from Rust; published to npm, not tracked in git)
-src/pdf-core/pdf_core_bg.wasm
-src/pdf-core/pdf_core.js
+# wasm-pack build outputs (pre-built; committed to repo so CI can build)
+# src/pdf-core/pdf_core.js  ← tracked, do NOT ignore
+# src/pdf-core/pdf_core_bg.wasm  ← tracked, do NOT ignore
+
 
 # Vite / TypeScript cache
 *.tsbuildinfo
